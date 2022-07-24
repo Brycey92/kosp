@@ -23,7 +23,7 @@ class SimpleDateTypeSerializer : TypeSerializer<Date> {
         }
     }
 
-    private fun deserialize(string: String?): Date? {
+    fun deserialize(string: String?): Date? {
         try {
             return dateFormat.parse(string)
         } catch (exception: ParseException) {
@@ -37,7 +37,7 @@ class SimpleDateTypeSerializer : TypeSerializer<Date> {
         }
     }
 
-    private fun serialize(date: Date): String = dateFormat.format(date)
+    fun serialize(date: Date): String = dateFormat.format(date)
 
     private fun deserializeLegacy(string: String) = legacyDateFormat.parse(string)
 }
