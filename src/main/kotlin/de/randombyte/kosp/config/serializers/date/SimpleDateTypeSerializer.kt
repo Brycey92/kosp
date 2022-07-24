@@ -8,32 +8,27 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-object SimpleDateTypeSerializer : TypeSerializer<Date> {
+class SimpleDateTypeSerializer : TypeSerializer<Date> {
 
     private val legacyDateFormat = SimpleDateFormat("HH:mm:ss.SSS dd.MM.yyyy")
     private val dateFormat = SimpleDateFormat("HH:mm:ss.SSS-dd.MM.yyyy")
 
-    override fun deserialize(type: TypeToken<*>?, value: ConfigurationNode?): Date {
-        if (value != null) {
-            return deserialize(value.string)
-        }
-        else {
-            throw ObjectMappingException("Invalid input value 'null' for a date like this: '21:18:25.300-28.03.2017'")
-        }
+    override fun deserialize(type: TypeToken<*>, value: ConfigurationNode): Date? {
+        return deserialize(value.string)
     }
 
-     override fun serialize(type: TypeToken<*>?, date: Date?, value: ConfigurationNode?) {
-        if (date != null && value != null) {
+     override fun serialize(type: TypeToken<*>, date: Date?, value: ConfigurationNode) {
+        if (date != null) {
             value.value = serialize(date)
         }
     }
 
-    fun deserialize(string: String): Date {
+    private fun deserialize(string: String?): Date? {
         try {
             return dateFormat.parse(string)
         } catch (exception: ParseException) {
             try {
-                return deserializeLegacy(string)
+                return string?.let { deserializeLegacy(it) }
             } catch (exception: ParseException) {
                 // Will be handled further down
             }
@@ -42,7 +37,7 @@ object SimpleDateTypeSerializer : TypeSerializer<Date> {
         }
     }
 
-    fun serialize(date: Date): String = dateFormat.format(date)
+    private fun serialize(date: Date): String = dateFormat.format(date)
 
     private fun deserializeLegacy(string: String) = legacyDateFormat.parse(string)
 }
