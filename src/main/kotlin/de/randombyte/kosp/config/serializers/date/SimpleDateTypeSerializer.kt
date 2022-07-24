@@ -13,10 +13,19 @@ object SimpleDateTypeSerializer : TypeSerializer<Date> {
     private val legacyDateFormat = SimpleDateFormat("HH:mm:ss.SSS dd.MM.yyyy")
     private val dateFormat = SimpleDateFormat("HH:mm:ss.SSS-dd.MM.yyyy")
 
-    override fun deserialize(type: TypeToken<*>, value: ConfigurationNode): Date = deserialize(value.string)
+    override fun deserialize(type: TypeToken<*>?, value: ConfigurationNode?): Date {
+        if (value != null) {
+            return deserialize(value.string)
+        }
+        else {
+            throw ObjectMappingException("Invalid input value 'null' for a date like this: '21:18:25.300-28.03.2017'")
+        }
+    }
 
-    override fun serialize(type: TypeToken<*>, date: Date, value: ConfigurationNode) {
-        value.value = serialize(date)
+     override fun serialize(type: TypeToken<*>?, date: Date?, value: ConfigurationNode?) {
+        if (date != null && value != null) {
+            value.value = serialize(date)
+        }
     }
 
     fun deserialize(string: String): Date {

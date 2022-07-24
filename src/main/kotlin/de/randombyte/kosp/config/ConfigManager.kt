@@ -35,10 +35,10 @@ class ConfigManager <T : Any> (val configLoader: ConfigurationLoader<CommentedCo
      * Returns the saved config. If none exists a new one is generated and already saved.
      */
     @Suppress("UNCHECKED_CAST")
-    fun load(): T = configLoader.load(options).getValue(typeToken) ?: {
+    fun load(): T = configLoader.load(options).getValue(typeToken) ?: run {
         save(typeToken.rawType.newInstance() as T)
         load()
-    }.invoke()
+    }
 
     @Deprecated("Use load() instead", ReplaceWith("load()"))
     fun get(): T = load()
