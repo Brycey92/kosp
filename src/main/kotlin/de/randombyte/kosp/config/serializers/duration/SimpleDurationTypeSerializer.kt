@@ -30,7 +30,7 @@ object SimpleDurationTypeSerializer : TypeSerializer<Duration> {
         node.value = duration?.let { serialize(it) }
     }
 
-    private fun deserialize(string: String?): Duration {
+    fun deserialize(string: String?): Duration {
         val result =
             string?.let { REGEX.matchEntire(it) } ?: throw RuntimeException("Couldn't parse duration '$string'!")
 
@@ -43,7 +43,7 @@ object SimpleDurationTypeSerializer : TypeSerializer<Duration> {
         return Duration.ofDays(days).plusHours(hours).plusMinutes(minutes).plusSeconds(seconds).plusMillis(milliseconds)
     }
 
-    private fun serialize(duration: Duration, outputMilliseconds: Boolean = true): String {
+    fun serialize(duration: Duration, outputMilliseconds: Boolean = true): String {
         val days = duration.seconds / DAY
         val hours = duration.seconds % DAY / HOUR
         val minutes = duration.seconds % DAY % HOUR / MINUTE
