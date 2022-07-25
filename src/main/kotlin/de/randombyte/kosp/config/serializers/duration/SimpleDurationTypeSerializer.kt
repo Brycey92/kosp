@@ -22,22 +22,23 @@ object SimpleDurationTypeSerializer : TypeSerializer<Duration> {
     private const val HOUR = 60 * MINUTE
     private const val DAY = 24 * HOUR
 
-    val REGEX = "(?:(\\d+)d)?(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?(?:(\\d+)ms)?".toRegex()
+    private val REGEX = "(?:(\\d+)d)?(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?(?:(\\d+)ms)?".toRegex()
 
     override fun deserialize(type: TypeToken<*>, node: ConfigurationNode) = deserialize(node.string)
 
-    override fun serialize(type: TypeToken<*>, duration: Duration, node: ConfigurationNode) {
-        node.value = serialize(duration)
+    override fun serialize(type: TypeToken<*>, duration: Duration?, node: ConfigurationNode) {
+        node.value = duration?.let { serialize(it) }
     }
 
-    fun deserialize(string: String): Duration {
-        val result = REGEX.matchEntire(string) ?: throw RuntimeException("Couldn't parse duration '$string'!")
+    fun deserialize(string: String?): Duration {
+        val result =
+            string?.let { REGEX.matchEntire(it) } ?: throw RuntimeException("Couldn't parse duration '$string'!")
 
-        val days = result.groupValues[1].toLongOrZero()
-        val hours = result.groupValues[2].toLongOrZero()
-        val minutes = result.groupValues[3].toLongOrZero()
-        val seconds = result.groupValues[4].toLongOrZero()
-        val milliseconds = result.groupValues[5].toLongOrZero()
+        val days: Long = result.groupValues[1].toLongOrZero()
+        val hours: Long = result.groupValues[2].toLongOrZero()
+        val minutes : Long = result.groupValues[3].toLongOrZero()
+        val seconds : Long = result.groupValues[4].toLongOrZero()
+        val milliseconds : Long = result.groupValues[5].toLongOrZero()
 
         return Duration.ofDays(days).plusHours(hours).plusMinutes(minutes).plusSeconds(seconds).plusMillis(milliseconds)
     }
@@ -57,8 +58,8 @@ object SimpleDurationTypeSerializer : TypeSerializer<Duration> {
         milliseconds.apply { if (outputMilliseconds && this != 0) sb.append(this).append("ms") }
 
         val string = sb.toString()
-        return if (string.isNotEmpty()) string else "0s" // prevent "" return values
+        return string.ifEmpty { "0s" } // prevent "" return values
     }
 
-    private fun String.toLongOrZero() = if (isEmpty()) 0 else toLong()
+    private fun String.toLongOrZero() = toLongOrNull() ?: 0L
 }

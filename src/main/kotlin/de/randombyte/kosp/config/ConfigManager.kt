@@ -27,7 +27,7 @@ class ConfigManager <T : Any> (val configLoader: ConfigurationLoader<CommentedCo
             .setShouldCopyDefaults(true)
             .setSerializers(TypeSerializers.getDefaultSerializers().newChild().apply {
                 if (simpleDurationSerialization) registerType(Duration::class.typeToken, SimpleDurationTypeSerializer)
-                if (simpleDateSerialization) registerType(Date::class.typeToken, SimpleDateTypeSerializer)
+                if (simpleDateSerialization) registerType(Date::class.typeToken, SimpleDateTypeSerializer())
                 additionalSerializers.invoke(this)
             })
 

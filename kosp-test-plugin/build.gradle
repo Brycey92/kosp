@@ -5,8 +5,8 @@ group "de.randombyte"
 version "1.0"
 
 repositories {
-    jcenter()
     maven { url "https://repo.spongepowered.org/maven/" }
+    mavenCentral()
 }
 
 configurations {
@@ -15,9 +15,9 @@ configurations {
 
 // If this plugin would be published the kotlin runtime, stdlib and kosp would have to be shaded and relocated
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
-    kapt "org.spongepowered:spongeapi:7.0.0"
-    compile(project.parent) { transitive = false }
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0'
+    implementation "org.spongepowered:spongeapi:7.4.0"
+    compileOnly(project.parent) { transitive = false }
 }
 
 compileKotlin {

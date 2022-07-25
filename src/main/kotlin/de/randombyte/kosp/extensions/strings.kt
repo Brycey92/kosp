@@ -92,9 +92,9 @@ fun String.tryAsByteItem(failMessage: String? = null): ItemStackSnapshot {
 
     val byteItemsApi = ByteItemsApi::class.getServiceOrFail(failMessage = "ByteItems could not be loaded although the plugin itself is present!")
     return if (failMessage != null) {
-        byteItemsApi.getItemSafely(id = this, failMessage = failMessage)
+        byteItemsApi.getItemSafely(this, failMessage)
     } else {
-        byteItemsApi.getItemSafely(id = this)
+        byteItemsApi.getItemSafely(this)
     }
 }
 
